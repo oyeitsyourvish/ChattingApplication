@@ -4,6 +4,7 @@ import java.awt.event.*;
 
 class Server extends JFrame implements ActionListener {
 
+
     Server() {
 
         // This is for Green Line box
