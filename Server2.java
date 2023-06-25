@@ -6,12 +6,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 // This is After branch
-class Server extends JFrame implements ActionListener {
+class Server2 extends JFrame implements ActionListener {
     JTextField text;
     JPanel a1;
     Box vertical = Box.createVerticalBox();
 
-    Server() {
+    Server2() {
 
         // THIS IS COMPLETED THE HEADER PART OF CHATTING //-------------------------->
         // STARTING POINT
@@ -39,7 +39,7 @@ class Server extends JFrame implements ActionListener {
         });
 
         // This is for Profile Button
-        ImageIcon i4 = new ImageIcon(ClassLoader.getSystemResource("icons/1.png"));
+        ImageIcon i4 = new ImageIcon(ClassLoader.getSystemResource("icons/2.png"));
         Image i5 = i4.getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT);
         ImageIcon i6 = new ImageIcon(i5);
         JLabel profile = new JLabel(i6);
@@ -71,7 +71,7 @@ class Server extends JFrame implements ActionListener {
         p1.add(menu);
 
         // Entering the name of Person
-        JLabel name = new JLabel("Jacklyn");
+        JLabel name = new JLabel("Server2");
         name.setBounds(110, 15, 100, 18);
         name.setForeground(Color.WHITE);
         name.setFont(new Font("SAN_SERIF", Font.BOLD, 18));
@@ -175,6 +175,6 @@ class Server extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         // 1. Server s= new Server(); // Named Object
-        new Server(); // Anonymous Object.
+        new Server2(); // Anonymous Object.
     }
 }
