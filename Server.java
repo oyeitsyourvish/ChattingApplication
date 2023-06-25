@@ -4,24 +4,28 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.net.*;
+import java.io.*;
 
 // This is After branch
-class Server extends JFrame implements ActionListener {
+class Server implements ActionListener {
     JTextField text;
     JPanel a1;
-    Box vertical = Box.createVerticalBox();
+    static Box vertical = Box.createVerticalBox();
+    static DataOutputStream dout;
+    static JFrame f = new JFrame();
 
     Server() {
 
         // THIS IS COMPLETED THE HEADER PART OF CHATTING //-------------------------->
         // STARTING POINT
         // This is for Green Line box
-        setLayout(null);
+        f.setLayout(null);
         JPanel p1 = new JPanel();
         p1.setBackground(new Color(7, 94, 84));
         p1.setBounds(0, 0, 450, 70);
         p1.setLayout(null);
-        add(p1);
+        f.add(p1);
 
         // This is for Back Button
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icons/3.png"));
@@ -92,7 +96,7 @@ class Server extends JFrame implements ActionListener {
         // created chatting msg area.
         a1 = new JPanel();
         a1.setBounds(5, 75, 440, 570);
-        add(a1);
+        f.add(a1);
         // THIS IS COMPLETED THE Middle Chatting Area PART OF CHATTING ------->Middel
         // Ending POINT
 
@@ -104,7 +108,7 @@ class Server extends JFrame implements ActionListener {
         text = new JTextField();
         text.setBounds(5, 655, 310, 40);
         text.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
-        add(text);
+        f.add(text);
 
         // creating send Button
         JButton send = new JButton("Send");
@@ -113,38 +117,46 @@ class Server extends JFrame implements ActionListener {
         send.setForeground(Color.WHITE);
         send.addActionListener(this);
         send.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
-        add(send);
+        f.add(send);
 
         // THIS IS COMPLETED THE FOOTER PART OF CHATTING ------->Footer Ending POINT
 
         // THIS IS FOR ALL SCREEN LAYOUT ---------------> STARTING POINT
-        setSize(460, 750);
+        f.setSize(460, 750);
         // setUndecorated(true); // hiding upper java logo area
-        getContentPane().setBackground(Color.WHITE);
-        setVisible(true);
+        f.getContentPane().setBackground(Color.WHITE);
+        f.setVisible(true);
         // THIS IS FOR ALL SCREEN LAYOUT ---------------> ENDING POINT
     }
 
     public void actionPerformed(ActionEvent ae) {
-        String out = text.getText();
 
-        JPanel p2 = formatLable(out);
+        try {
 
-        a1.setLayout(new BorderLayout());
+            String out = text.getText();
 
-        JPanel right = new JPanel(new BorderLayout());
+            JPanel p2 = formatLable(out);
 
-        right.add(p2, BorderLayout.LINE_END);
-        vertical.add(right);
-        vertical.add(Box.createVerticalStrut(15));
+            a1.setLayout(new BorderLayout());
 
-        a1.add(vertical, BorderLayout.PAGE_START);
+            JPanel right = new JPanel(new BorderLayout());
 
-        text.setText(" ");
+            right.add(p2, BorderLayout.LINE_END);
+            vertical.add(right);
+            vertical.add(Box.createVerticalStrut(15));
 
-        repaint();
-        invalidate();
-        validate();
+            a1.add(vertical, BorderLayout.PAGE_START);
+
+            dout.writeUTF(out);
+
+            text.setText(" ");
+
+            f.repaint();
+            f.invalidate();
+            f.validate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -176,5 +188,29 @@ class Server extends JFrame implements ActionListener {
     public static void main(String[] args) {
         // 1. Server s= new Server(); // Named Object
         new Server(); // Anonymous Object.
+
+        try {
+            // creating server to send and receive msg from both of them
+            ServerSocket stk = new ServerSocket(6001);
+
+            while (true) {
+                Socket s = stk.accept();
+                DataInputStream din = new DataInputStream(s.getInputStream());
+                dout = new DataOutputStream(s.getOutputStream());
+                while (true) {
+                    String msg = din.readUTF();
+                    JPanel panel = formatLable(msg);
+
+                    JPanel left = new JPanel(new BorderLayout());
+                    left.add(panel, BorderLayout.LINE_START);
+                    vertical.add(left);
+                    f.validate();
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
     }
 }

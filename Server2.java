@@ -119,6 +119,7 @@ class Server2 extends JFrame implements ActionListener {
 
         // THIS IS FOR ALL SCREEN LAYOUT ---------------> STARTING POINT
         setSize(460, 750);
+        setLocation(800, 0);
         // setUndecorated(true); // hiding upper java logo area
         getContentPane().setBackground(Color.WHITE);
         setVisible(true);
@@ -176,5 +177,11 @@ class Server2 extends JFrame implements ActionListener {
     public static void main(String[] args) {
         // 1. Server s= new Server(); // Named Object
         new Server2(); // Anonymous Object.
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
     }
 }
