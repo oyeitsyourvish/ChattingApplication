@@ -4,24 +4,28 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.net.*;
+import java.io.*;
 
 // This is once more After branch
-class Server2 extends JFrame implements ActionListener {
+class Server2 implements ActionListener {
     JTextField text;
-    JPanel a1;
-    Box vertical = Box.createVerticalBox();
+    static JPanel a1;
+    static DataOutputStream dout;
+    static Box vertical = Box.createVerticalBox();
+    static JFrame f = new JFrame();
 
     Server2() {
 
         // THIS IS COMPLETED THE HEADER PART OF CHATTING //-------------------------->
         // STARTING POINT
         // This is for Green Line box
-        setLayout(null);
+        f.setLayout(null);
         JPanel p1 = new JPanel();
         p1.setBackground(new Color(7, 94, 84));
         p1.setBounds(0, 0, 450, 70);
         p1.setLayout(null);
-        add(p1);
+        f.add(p1);
 
         // This is for Back Button
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icons/3.png"));
@@ -92,7 +96,7 @@ class Server2 extends JFrame implements ActionListener {
         // created chatting msg area.
         a1 = new JPanel();
         a1.setBounds(5, 75, 440, 570);
-        add(a1);
+        f.add(a1);
         // THIS IS COMPLETED THE Middle Chatting Area PART OF CHATTING ------->Middel
         // Ending POINT
 
@@ -104,7 +108,7 @@ class Server2 extends JFrame implements ActionListener {
         text = new JTextField();
         text.setBounds(5, 655, 310, 40);
         text.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
-        add(text);
+        f.add(text);
 
         // creating send Button
         JButton send = new JButton("Send");
@@ -113,39 +117,45 @@ class Server2 extends JFrame implements ActionListener {
         send.setForeground(Color.WHITE);
         send.addActionListener(this);
         send.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
-        add(send);
+        f.add(send);
 
         // THIS IS COMPLETED THE FOOTER PART OF CHATTING ------->Footer Ending POINT
 
         // THIS IS FOR ALL SCREEN LAYOUT ---------------> STARTING POINT
-        setSize(460, 750);
-        setLocation(800, 0);
+        f.setSize(460, 750);
+        f.setLocation(800, 0);
         // setUndecorated(true); // hiding upper java logo area
-        getContentPane().setBackground(Color.WHITE);
-        setVisible(true);
+        f.getContentPane().setBackground(Color.WHITE);
+        f.setVisible(true);
         // THIS IS FOR ALL SCREEN LAYOUT ---------------> ENDING POINT
     }
 
     public void actionPerformed(ActionEvent ae) {
-        String out = text.getText();
+        try {
 
-        JPanel p2 = formatLable(out);
+            String out = text.getText();
 
-        a1.setLayout(new BorderLayout());
+            JPanel p2 = formatLable(out);
 
-        JPanel right = new JPanel(new BorderLayout());
+            a1.setLayout(new BorderLayout());
 
-        right.add(p2, BorderLayout.LINE_END);
-        vertical.add(right);
-        vertical.add(Box.createVerticalStrut(15));
+            JPanel right = new JPanel(new BorderLayout());
 
-        a1.add(vertical, BorderLayout.PAGE_START);
+            right.add(p2, BorderLayout.LINE_END);
+            vertical.add(right);
+            vertical.add(Box.createVerticalStrut(15));
 
-        text.setText(" ");
+            a1.add(vertical, BorderLayout.PAGE_START);
+            dout.writeUTF(out);
 
-        repaint();
-        invalidate();
-        validate();
+            text.setText(" ");
+
+            f.repaint();
+            f.invalidate();
+            f.validate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -178,6 +188,22 @@ class Server2 extends JFrame implements ActionListener {
         // 1. Server s= new Server(); // Named Object
         new Server2(); // Anonymous Object.
         try {
+            Socket s = new Socket("127.0.0.1", 6001);
+            DataInputStream din = new DataInputStream(s.getInputStream());
+            dout = new DataOutputStream(s.getOutputStream());
+            while (true) {
+                a1.setLayout(new BorderLayout());
+                String msg = din.readUTF();
+                JPanel panel = formatLable(msg);
+
+                JPanel left = new JPanel(new BorderLayout());
+                left.add(panel, BorderLayout.LINE_START);
+                vertical.add(left);
+
+                vertical.add(Box.createVerticalStrut(15));
+                a1.add(vertical, BorderLayout.PAGE_START);
+                f.validate();
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
